@@ -128,6 +128,10 @@ claude-hermes briefs/example-todo-cli.md --iterations 5 --label todo
 
 # 시스템에 다른 hermes CLI 가 있거나 PATH 충돌이 걱정되면 모듈 실행이 안전
 python -m hermes briefs/example-todo-cli.md --iterations 5 --label todo
+
+# Log 레벨과 Iteration 시 세부 출력 여부를 설정
+# --no-stop-on-pass 는 Iteration 중에 성공해도 끝까지 Iteration 을 수행
+ANTHROPIC_LOG=debug HERMES_QUIET=false python -m hermes briefs/example-todo-cli.md --iterations 2 --label todo --no-stop-on-pass 2> todo-debug.log
 ```
 
 > 참고: CLI 이름이 `claude-hermes` 인 이유는 시스템에 다른 `hermes` 명령이
