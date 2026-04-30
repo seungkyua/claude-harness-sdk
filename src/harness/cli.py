@@ -11,7 +11,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from rich.console import Console
 
-from .config import HermesConfig
+from .config import HarnessConfig
 from .orchestrator import run
 
 
@@ -40,7 +40,7 @@ def _scrub_claude_code_env() -> list[str]:
 
 def _parse_args(argv: list[str]) -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        prog="hermes",
+        prog="harness",
         description="Planner-Generator-Evaluator harness for iterative program development.",
     )
     p.add_argument("brief", type=Path, help="Path to the brief (a markdown file).")
@@ -103,7 +103,7 @@ def main(argv: list[str] | None = None) -> int:
         console.print(f"[red]Config not found: {args.config}[/red]")
         return 2
 
-    cfg = HermesConfig.load(args.config)
+    cfg = HarnessConfig.load(args.config)
     if args.iterations is not None:
         cfg.max_iterations = args.iterations
     if args.no_stop_on_pass:

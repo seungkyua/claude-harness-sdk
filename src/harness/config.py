@@ -22,7 +22,7 @@ class MaxTurns:
 
 
 @dataclass
-class HermesConfig:
+class HarnessConfig:
     max_iterations: int = 5
     stop_on_pass: bool = True
     replan_every: int = 0
@@ -32,7 +32,7 @@ class HermesConfig:
     max_turns: MaxTurns = field(default_factory=MaxTurns)
 
     @classmethod
-    def load(cls, path: Path) -> "HermesConfig":
+    def load(cls, path: Path) -> "HarnessConfig":
         data: dict[str, Any] = yaml.safe_load(path.read_text()) or {}
         models = Models(**(data.get("models") or {}))
         max_turns = MaxTurns(**(data.get("max_turns") or {}))

@@ -2,10 +2,10 @@
 
   만들어진 구조
 
-  claude-hermes/
+  claude-harness/
   ├── README.md                    # 시작 가이드 (아래 내용의 상세판)
   ├── config.yaml                  # max_iterations, 모델, 권한 모드
-  ├── pyproject.toml               # 의존성 + hermes CLI 등록
+  ├── pyproject.toml               # 의존성 + harness CLI 등록
   ├── .env.example                 # ANTHROPIC_API_KEY
   ├── briefs/
   │   └── example-todo-cli.md      # 시험용 brief
@@ -13,7 +13,7 @@
   │   ├── planner.md               # brief.md → spec.md
   │   ├── generator.md             # spec + 피드백 → project/
   │   └── evaluator.md             # 회의적 평가 + verdict: PASS|FAIL
-  └── src/hermes/
+  └── src/harness/
       ├── cli.py                   # 진입점 (argparse)
       ├── config.py                # YAML 로더
       ├── io.py                    # 한 run 의 파일 레이아웃 (RunLayout)
@@ -22,8 +22,8 @@
 
   설계 요점 (아티클 대응)
 
-  - 파일 기반 핸드오프 — 에이전트는 세션을 공유하지 않고, 매 호출마다 clean context. 상태는 전부 brief.md → spec.md → project/ → reports/latest.md 파일에 있음 (src/hermes/io.py:11).
-  - 역할별 도구 허용치 분리 — Planner는 읽기/쓰기, Generator는 + Bash/Edit, Evaluator는 코드 수정 금지 (src/hermes/agents.py:63, agents.py:104, agents.py:147).
+  - 파일 기반 핸드오프 — 에이전트는 세션을 공유하지 않고, 매 호출마다 clean context. 상태는 전부 brief.md → spec.md → project/ → reports/latest.md 파일에 있음 (src/harness/io.py:11).
+  - 역할별 도구 허용치 분리 — Planner는 읽기/쓰기, Generator는 + Bash/Edit, Evaluator는 코드 수정 금지 (src/harness/agents.py:63, agents.py:104, agents.py:147).
   - 회의적 Evaluator — 실제 빌드·테스트를 Bash로 돌리고, 각 acceptance criterion 에 MET/PARTIAL/NOT MET. 마지막 줄 verdict: PASS|FAIL 하나로 루프 종료 판단 (prompts/evaluator.md, 파싱은
   orchestrator.py:42).
   - 설정 가능한 iteration — config.yaml 의 max_iterations, stop_on_pass, replan_every. CLI 에서 --iterations N 오버라이드.
@@ -40,7 +40,7 @@
 
   2. 파이썬 환경
 
-  cd /Users/ask.ahn/Documents/works/ai/claude-hermes
+  cd /Users/ask.ahn/Documents/works/ai/claude-harness-sdk
   python3 -m venv .venv
   source .venv/bin/activate
   pip install -e .
@@ -61,18 +61,18 @@
   replan_every: 0        # > 0 이면 N iter 마다 Planner 재호출
 
   CLI 로 오버라이드:
-  ANTHROPIC_LOG=debug claude-hermes briefs/example-todo-cli.md --iterations 2 --label todo --no-stop-on-pass 2> todo-debug.log
+  ANTHROPIC_LOG=debug claude-harness briefs/example-todo-cli.md --iterations 2 --label todo --no-stop-on-pass 2> todo-debug.log
 
   # 또는 모듈 실행 (PATH 충돌 완전 회피)
-  python -m hermes briefs/example-todo-cli.md --iterations 3 --label todo
-  ANTHROPIC_LOG=debug HERMES_QUIET=false python -m hermes briefs/example-todo-cli.md --iterations 2 --label todo --no-stop-on-pass 2> todo-debug.log
+  python -m harness briefs/example-todo-cli.md --iterations 3 --label todo
+  ANTHROPIC_LOG=debug HARNESS_QUIET=false python -m harness briefs/example-todo-cli.md --iterations 2 --label todo --no-stop-on-pass 2> todo-debug.log
 
   # stop_on_pass 끄고 싶으면:
-  claude-hermes briefs/my-app.md --iterations 8 --no-stop-on-pass
+  claude-harness briefs/my-app.md --iterations 8 --no-stop-on-pass
 
   5. 실행 & 결과 확인
 
-  hermes briefs/example-todo-cli.md --iterations 5 --label todo
+  harness briefs/example-todo-cli.md --iterations 5 --label todo
 
   콘솔에는 Planner → Generator(iter 1) → Evaluator(iter 1) → ... 순으로 rule 이 찍히고, 각 단계별 turn 수/비용이 로그로 남습니다.
 
@@ -98,7 +98,7 @@
   - 비용 ↓ → config.yaml 의 models.generator 를 claude-haiku-4-5-20251001 로. Planner/Evaluator 는 판단 품질에 직결되니 Opus/Sonnet 유지 권장.
 
   ---
-  바로 시도해 보려면 briefs/example-todo-cli.md 로 hermes briefs/example-todo-cli.md --iterations 3 --label todo 를 돌려 보세요. 진행 중 로그가 어떻게 찍히는지, PASS 가 몇 iteration 에 나오는지 감을
+  바로 시도해 보려면 briefs/example-todo-cli.md 로 harness briefs/example-todo-cli.md --iterations 3 --label todo 를 돌려 보세요. 진행 중 로그가 어떻게 찍히는지, PASS 가 몇 iteration 에 나오는지 감을
   잡은 뒤 본인 brief 로 옮기면 됩니다.
 
 

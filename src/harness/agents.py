@@ -5,7 +5,7 @@ Each agent is a single invocation of the Claude Agent SDK with:
   - File-based handoffs — the prior agent's artifact on disk is the input.
   - A role-scoped system prompt and tool allowlist.
 
-The loop itself lives in hermes.orchestrator.
+The loop itself lives in harness.orchestrator.
 """
 
 from __future__ import annotations
@@ -27,16 +27,16 @@ from claude_agent_sdk import (
 from claude_agent_sdk.types import ToolResultBlock, ToolUseBlock
 from rich.console import Console
 
-from .config import HermesConfig
+from .config import HarnessConfig
 from .io import RunLayout
 
 
 def _quiet_enabled() -> bool:
-    return os.environ.get("HERMES_QUIET", "").strip().lower() in ("1", "true", "yes", "on")
+    return os.environ.get("HARNESS_QUIET", "").strip().lower() in ("1", "true", "yes", "on")
 
 
 # rich.Console(quiet=True) makes every .print() a no-op, so we can keep the
-# call sites unchanged. Evaluated at module load — if you toggle HERMES_QUIET
+# call sites unchanged. Evaluated at module load — if you toggle HARNESS_QUIET
 # mid-run you'll need to re-import.
 _live_console = Console(quiet=_quiet_enabled())
 
@@ -190,7 +190,7 @@ async def _run_agent(
 PLANNER_TOOLS = ["Read", "Write", "Edit", "Glob", "Grep"]
 
 
-async def run_planner(layout: RunLayout, cfg: HermesConfig, *, revise: bool) -> AgentResult:
+async def run_planner(layout: RunLayout, cfg: HarnessConfig, *, revise: bool) -> AgentResult:
     """Read brief.md (+ latest report, if revising), produce/update spec.md."""
     system_prompt = _load_prompt("planner")
     if revise and layout.latest_report.exists():
@@ -226,7 +226,7 @@ async def run_planner(layout: RunLayout, cfg: HermesConfig, *, revise: bool) -> 
 GENERATOR_TOOLS = ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 
 
-async def run_generator(layout: RunLayout, cfg: HermesConfig, iteration: int) -> AgentResult:
+async def run_generator(layout: RunLayout, cfg: HarnessConfig, iteration: int) -> AgentResult:
     """Implement or amend the project based on spec.md + latest evaluator report."""
     system_prompt = _load_prompt("generator")
 
@@ -266,7 +266,7 @@ async def run_generator(layout: RunLayout, cfg: HermesConfig, iteration: int) ->
 EVALUATOR_TOOLS = ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 
 
-async def run_evaluator(layout: RunLayout, cfg: HermesConfig, iteration: int) -> AgentResult:
+async def run_evaluator(layout: RunLayout, cfg: HarnessConfig, iteration: int) -> AgentResult:
     """Run build + tests, compare to spec, write reports/iter_NN.md."""
     system_prompt = _load_prompt("evaluator")
     report_name = layout.report(iteration).name

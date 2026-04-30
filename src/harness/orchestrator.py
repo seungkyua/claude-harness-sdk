@@ -11,7 +11,7 @@ from pathlib import Path
 from rich.console import Console
 
 from .agents import AgentResult, run_evaluator, run_generator, run_planner
-from .config import HermesConfig
+from .config import HarnessConfig
 from .io import RunLayout, new_run_dir
 
 
@@ -62,7 +62,7 @@ def _log(layout: RunLayout, msg: str) -> None:
     console.log(msg)
 
 
-async def run(brief_path: Path, cfg: HermesConfig, *, label: str | None = None) -> RunResult:
+async def run(brief_path: Path, cfg: HarnessConfig, *, label: str | None = None) -> RunResult:
     brief_path = brief_path.resolve()
     if not brief_path.is_file():
         raise FileNotFoundError(f"Brief not found: {brief_path}")

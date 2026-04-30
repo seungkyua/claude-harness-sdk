@@ -1,4 +1,4 @@
-"""Minimal reproduction: call Claude Agent SDK the same way hermes does,
+"""Minimal reproduction: call Claude Agent SDK the same way harness does,
 with a short prompt, and forward the nested CLI's stderr to our own stderr.
 
 Run:

@@ -1,4 +1,4 @@
-# Hermes harness configuration
+# Harness configuration
 # Override any field via CLI flags or a different --config file.
 
 # Iteration loop
